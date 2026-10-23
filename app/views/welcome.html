@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevTrack — Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --surface-2:   #1c2330;
+      --border:      #21262d;
+      --accent:      #4f8ef7;
+      --accent-glow: rgba(79,142,247,.15);
+      --green:       #3fb950;
+      --yellow:      #d29922;
+      --red:         #f85149;
+      --fg:          #e6edf3;
+      --fg-muted:    #7d8590;
+      --font-ui:     'Inter', sans-serif;
+      --font-mono:   'JetBrains Mono', monospace;
+      --radius:      10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      animation: slideDown .5s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .brand-icon {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .brand-icon svg {
+      width: 16px; height: 16px;
+      fill: none; stroke: #fff;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .brand-name {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .brand-name span { color: var(--accent); }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--fg-muted);
+    }
+
+    .avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--fg-muted);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .18s, color .18s, background .18s;
+    }
+
+    .logout-btn svg {
+      width: 14px; height: 14px;
+      fill: none; stroke: currentColor;
+      stroke-width: 2; stroke-linecap: round;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(248,81,73,.06);
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      padding: 36px 32px;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* ── Bienvenida ── */
+    .welcome-header {
+      margin-bottom: 32px;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .1s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 700;
+      letter-spacing: -.6px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-title span {
+      color: var(--accent);
+    }
+
+    .welcome-sub {
+      font-size: 14px;
+      color: var(--fg-muted);
+    }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: .15s; }
+    .stat-card:nth-child(2) { animation-delay: .22s; }
+    .stat-card:nth-child(3) { animation-delay: .29s; }
+    .stat-card:nth-child(4) { animation-delay: .36s; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-label svg {
+      width: 13px; height: 13px;
+      fill: none; stroke: currentColor;
+      stroke-width: 2; stroke-linecap: round;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-delta {
+      font-size: 12px;
+      color: var(--green);
+    }
+
+    /* ── Grid inferior ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      animation: fadeUp .6s cubic-bezier(.16,1,.3,1) .4s both;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border-radius: 20px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    /* Tasks */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      transition: border-color .18s;
+    }
+
+    .task:hover { border-color: rgba(79,142,247,.3); }
+
+    .task-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .task-dot.green  { background: var(--green); }
+    .task-dot.yellow { background: var(--yellow); }
+    .task-dot.red    { background: var(--red); }
+
+    .task-name { flex: 1; }
+
+    .task-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+    }
+
+    .task-tag.backend  { background: rgba(79,142,247,.12); color: var(--accent); }
+    .task-tag.devops   { background: rgba(63,185,80,.12);  color: var(--green); }
+    .task-tag.frontend { background: rgba(210,153,34,.12); color: var(--yellow); }
+
+    /* Activity */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-icon {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-icon svg {
+      width: 14px; height: 14px;
+      fill: none; stroke: var(--fg-muted);
+      stroke-width: 2; stroke-linecap: round;
+    }
+
+    .activity-text { flex: 1; line-height: 1.5; }
+    .activity-text strong { font-weight: 600; color: var(--fg); }
+
+    .activity-time {
+      font-size: 11.5px;
+      color: var(--fg-muted);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .topbar { padding: 0 16px; }
+      main { padding: 24px 16px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .topbar-right .user-chip { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .topbar, .welcome-header, .stat-card, .panel { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="16 18 22 12 16 6"/>
+          <polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
+      <span class="brand-name">Dev<span>Track</span></span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="avatar" id="avatarInitial">?</div>
+        <span id="topbarName">Usuario</span>
+      </div>
+      <a href="/logout" class="logout-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Salir
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Bienvenida -->
+    <div class="welcome-header">
+      <p class="welcome-label">Panel principal</p>
+      <h1 class="welcome-title">Bienvenido, <span id="welcomeName">{{NAME}}</span></h1>
+      <p class="welcome-sub">Aquí tienes el resumen de tu actividad en DevTrack.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Tareas completadas
+        </div>
+        <div class="stat-value">14</div>
+        <div class="stat-delta">↑ 3 esta semana</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          En progreso
+        </div>
+        <div class="stat-value">5</div>
+        <div class="stat-delta" style="color:var(--yellow)">2 con vencimiento hoy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Compañeros activos
+        </div>
+        <div class="stat-value">8</div>
+        <div class="stat-delta">↑ 2 desde ayer</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">
+          <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Commits hoy
+        </div>
+        <div class="stat-value">23</div>
+        <div class="stat-delta">↑ 8 vs. ayer</div>
+      </div>
+    </div>
+
+    <!-- Grid inferior -->
+    <div class="grid-2">
+
+      <!-- Tareas asignadas -->
+      <div class="panel">
+        <div class="panel-title">
+          Tareas asignadas
+          <span class="panel-title-badge">5 activas</span>
+        </div>
+        <div class="task-list">
+          <div class="task">
+            <div class="task-dot green"></div>
+            <span class="task-name">Migración de base de datos v2</span>
+            <span class="task-tag devops">devops</span>
+          </div>
+          <div class="task">
+            <div class="task-dot yellow"></div>
+            <span class="task-name">Endpoint de autenticación JWT</span>
+            <span class="task-tag backend">backend</span>
+          </div>
+          <div class="task">
+            <div class="task-dot yellow"></div>
+            <span class="task-name">Review PR #48 — módulo de pagos</span>
+            <span class="task-tag backend">backend</span>
+          </div>
+          <div class="task">
+            <div class="task-dot red"></div>
+            <span class="task-name">Fix: inputs sin validación en /perfil</span>
+            <span class="task-tag frontend">frontend</span>
+          </div>
+          <div class="task">
+            <div class="task-dot green"></div>
+            <span class="task-name">Deploy pipeline CI/CD staging</span>
+            <span class="task-tag devops">devops</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actividad reciente -->
+      <div class="panel">
+        <div class="panel-title">Actividad reciente</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon">
+              <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div>
+              <div class="activity-text"><strong>jperez</strong> hizo push a rama <strong>feat/auth</strong></div>
+              <div class="activity-time">hace 12 min</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">
+              <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <div class="activity-text">Pipeline <strong>staging-deploy</strong> completado</div>
+              <div class="activity-time">hace 34 min</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <div class="activity-text"><strong>admin</strong> comentó en PR #48</div>
+              <div class="activity-time">hace 1 h</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div>
+              <div class="activity-text">Alerta: uso de CPU al <strong>87%</strong> en staging</div>
+              <div class="activity-time">hace 2 h</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // El servidor inyecta el nombre en {{NAME}} al renderizar
+    // Este script lo toma y actualiza el topbar dinámicamente
+    const name = document.getElementById('welcomeName').textContent.trim();
+    document.getElementById('topbarName').textContent = name;
+    const initial = name.charAt(0).toUpperCase();
+    document.getElementById('avatarInitial').textContent = initial;
+  </script>
+
+</body>
+</html>
